@@ -1,0 +1,103 @@
+# ===========================================
+# Configuration générale du service de backup
+# ===========================================
+
+# Liste des autorisations (scopes) OAuth nécessaires pour Google Drive
+scopes:
+  - "https://www.googleapis.com/auth/drive"  # accès complet à Google Drive
+
+# Intervalle par défaut entre deux backups
+backup_interval:
+  hours: 6   # toutes les 6 heures
+
+# Nombre de sauvegardes locales à conserver
+local_keep: 5  # Garde les 5 dernières archives locales
+
+# Nombre de dossiers de sauvegarde sur Drive à conserver
+drive_keep: 5  # Garde les 5 derniers dossiers créés sur Drive
+
+# Extensions de fichiers à exclure de la sauvegarde (global)
+excluded_extensions:
+  - ".pyc"   # fichiers Python compilés
+  - ".log"   # fichiers de log
+  - ".tmp"   # fichiers temporaires
+  - ".json"  # fichiers JSON (configs, logs…)
+  - ".zip"   # archives ZIP pour éviter la récursivité
+
+# Noms de dossiers à exclure de la sauvegarde (global)
+excluded_folders:
+  - "__pycache__"  # cache Python
+  - ".git"         # dossier Git
+  - "venv"         # environnement virtuel Python
+  - ".idea"        # configs d’IDE (PyCharm…)
+  - ".mypy_cache"  # cache MyPy
+
+# ===========================================
+# Liste des bots de backup (un par dossier)
+# A copier coller si tu veux utiliser d'autres dossier à sauvegarder, en configurant chaque valeur toi même.
+# Commence à:
+# - name
+# Fini à 
+# - "git"
+# ===========================================
+bots:
+
+  - name: "Ludi"  # nom du bot, utilisé dans les logs et sur Drive
+    service_account_file: "clé/test-bot-sauvegarde-e48592f5a0a2.json"
+      # chemin vers le fichier de compte de service Google (JSON)
+    parent_folder_id: "1keOpTHer1gADyeFf4SGxi52FBVkjUyUwu"
+      # ID du dossier parent sur Drive où seront créés les sous-dossiers horodatés
+    folder_to_zip: "C:/Users/856/Downloads/Test téléchargement dans dossier google drive"
+      # chemin du dossier local à zipper
+    local_backup_root: "backup/Ludi"
+      # dossier local où seront stockés les backups horodatés
+    zip_prefix: "backup-ludi"
+      # préfixe utilisé pour nommer les fichiers ZIP
+
+    # Intervalle spécifique à ce bot (remplace backup_interval global)
+    backup_interval:
+      minutes: 120   # toutes les 120 minutes (2 heures)
+
+    local_keep: 5   # nombre de dossiers locaux à garder pour ce bot
+    drive_keep: 12  # nombre de dossiers Drive à garder pour ce bot
+
+    log_file: "backup/Ludi/backup_log.json"
+      # chemin du fichier de log JSON (si utilisé par votre script)
+
+    # Extensions à exclure spécifiquement pour ce bot
+    excluded_extensions:
+      - ".tmp"  # temporaires
+      - ".zip"  # archives
+
+    # Dossiers à exclure spécifiquement pour ce bot
+    excluded_folders:
+      - "__pycache__"
+      - ".git"
+
+
+# ===========================================
+# Autre bot exemple qui utilise les valeurs global
+# ===========================================
+
+  - name: "AutreBot"  # deuxième bot de backup
+    service_account_file: "clé/test-bot-sauvegarde-e48592f5a0a2.json"
+      # même compte de service ou un autre, selon votre choix
+    parent_folder_id: "15sY18Pd1doMieH8j_G3WNf9O5ItC9J_"
+      # ID Drive parent pour ce bot
+    folder_to_zip: "C:/Users/856/Downloads/Dossier de test"
+      # dossier local à zipper pour ce bot
+    local_backup_root: "backup/AutreBot"
+      # stockage local horodaté pour ce bot
+    zip_prefix: "backup-autre"
+      # préfixe pour les fichiers ZIP de ce bot
+
+    # Intervalle spécifique à ce bot (12 heures)
+    backup_interval:
+      hours: 12   # toutes les 12 heures
+
+    local_keep: 5   # conserve 5 versions locales
+    drive_keep: 12  # conserve 12 versions sur Drive
+
+    # Pas d'exclusions propres : utilise celles du global
+    # excluded_extensions: (hérité du niveau supérieur)
+    # excluded_folders:    (hérité du niveau supérieur)
